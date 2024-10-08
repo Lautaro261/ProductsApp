@@ -1,18 +1,28 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Button, Icon, Layout, Text } from '@ui-kitten/components';
+import { StyleSheet } from 'react-native';
 
 export const HomeScreen = () => {
   return (
-    <View style={styles.container}>
+    <Layout style={styles.layout}>
+
       <Text>HomeScreen</Text>
-    </View>
+      <Button
+      accessoryLeft={<Icon name="home" />}
+      >
+        Cerrar sesión
+      </Button>
+
+    </Layout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  layout:{
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
 });
+
+

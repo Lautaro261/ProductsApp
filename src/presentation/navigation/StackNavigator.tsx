@@ -19,6 +19,7 @@ const Stack = createStackNavigator<RootStackParams>();
 export const StackNavigator = () => {
   return (
     <Stack.Navigator
+    initialRouteName="LoginScreen"
     screenOptions={{
         headerShown: false,
     }}
