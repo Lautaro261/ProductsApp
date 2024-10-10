@@ -2,8 +2,14 @@ import React from 'react';
 import { ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import { Button, Input, Layout, Text } from '@ui-kitten/components';
 import { CustomIcon } from '../../components/ui/CustomIcon';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParams } from '../../navigation/StackNavigator';
 
-export const LoginScreen = () => {
+
+interface Props extends StackScreenProps<RootStackParams, 'LoginScreen'>{}
+
+
+export const LoginScreen = ({navigation}:Props) => {
 
   const { height } = useWindowDimensions();
 
@@ -62,7 +68,7 @@ export const LoginScreen = () => {
           <Text
           status="primary"
           category="s1"
-          onPress={()=>{}}
+          onPress={()=>navigation.navigate('RegisterScreen')}
           > Crear cuenta</Text>
         </Layout>
 
