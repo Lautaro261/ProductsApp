@@ -1,9 +1,12 @@
-import React from 'react';
-import { ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+/* eslint-disable curly */
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import { Button, Input, Layout, Text } from '@ui-kitten/components';
 import { CustomIcon } from '../../components/ui/CustomIcon';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParams } from '../../navigation/StackNavigator';
+import { useAuthStore } from '../../store/auth/UseAuthStore';
+
 
 
 
@@ -11,8 +14,22 @@ interface Props extends StackScreenProps<RootStackParams, 'LoginScreen'>{}
 
 
 export const LoginScreen = ({navigation}:Props) => {
-
+  const { login } = useAuthStore();
+  const [ form, setForm ] = useState({
+    email: 'test1@google.com',
+    password: 'Abc123',
+  });
   const { height } = useWindowDimensions();
+
+  const onLogin = async() => {
+    if(form.email.length === 0 || form.password.length === 0)return;
+
+    const wasSuccesful = await login(form.email, form.password);
+
+    if(wasSuccesful)return;
+
+    Alert.alert('Error', 'Correo electrónico o contraseña incorrecto');
+  };
 
 
   return (
@@ -31,6 +48,8 @@ export const LoginScreen = ({navigation}:Props) => {
           keyboardType="email-address"
           autoCapitalize="none"
           placeholder="Correo electrónico"
+          value={form.email}
+          onChangeText={(value)=>setForm({...form, email:value})}
           accessoryLeft={<CustomIcon name="email-outline"/>}
           />
 
@@ -39,9 +58,13 @@ export const LoginScreen = ({navigation}:Props) => {
           autoCapitalize="none"
           placeholder="Contraseña"
           secureTextEntry
+          value={form.password}
+          onChangeText={(value)=>setForm({...form, password: value})}
           accessoryLeft={<CustomIcon name="lock-outline"/>}
           />
         </Layout>
+
+        <Text>{JSON.stringify(form, null, 2)}</Text>
 
         {/* Space */}
         <Layout style={styles.spacer}/>
@@ -51,7 +74,7 @@ export const LoginScreen = ({navigation}:Props) => {
         <Layout>
           <Button
           accessoryRight={<CustomIcon name="arrow-forward-outline" white/>}
-          onPress={()=>{}}
+          onPress={onLogin}
           >
             Ingresar
           </Button>
