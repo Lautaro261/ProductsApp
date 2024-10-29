@@ -17,9 +17,12 @@ export const useAuthStore = create<AuthState>()((set, get)=>({
     user: undefined,
 
     login: async(email: string, password: string) => {
+        console.log(`LOGIN - email:${email}`);
+        console.log(`LOGIN - password:${password}`);
         const response = await authLogin(email,password);
-
+        console.log('linea 23',response);
         if(!response){
+            console.log('entré al if');
             set({
                 status: 'unauthenticated',
                 token: undefined,
@@ -28,7 +31,7 @@ export const useAuthStore = create<AuthState>()((set, get)=>({
             return false;
         }
 
-        console.log(response);
+        console.log('linea 33',response);
         set({
             status: 'authenticated',
             token : response.token,

@@ -10,10 +10,13 @@ import { useAuthStore } from '../../store/auth/UseAuthStore';
 
 
 
+
 interface Props extends StackScreenProps<RootStackParams, 'LoginScreen'>{}
 
 
 export const LoginScreen = ({navigation}:Props) => {
+
+
   const { login } = useAuthStore();
   const [ form, setForm ] = useState({
     email: 'test1@google.com',

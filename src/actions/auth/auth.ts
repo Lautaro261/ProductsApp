@@ -19,6 +19,7 @@ const returnUserToken = (data: AuthResponse)=>{
 
 export const authLogin = async (email: string, password: string) => {
     email = email.toLowerCase();
+    console.log('auth.js - linea 22 ',email,password);
   try {
     const {data} = await apiAxiosCustom.post<AuthResponse>('/auth/login', {
       email,
