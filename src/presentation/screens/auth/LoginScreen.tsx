@@ -16,18 +16,23 @@ interface Props extends StackScreenProps<RootStackParams, 'LoginScreen'>{}
 
 export const LoginScreen = ({navigation}:Props) => {
 
+  const { height } = useWindowDimensions();
 
   const { login } = useAuthStore();
+  const [isPosting, setIsPosting] = useState(false);
+
   const [ form, setForm ] = useState({
-    email: 'test1@google.com',
-    password: 'Abc123',
+    email: '',
+    password: '',
   });
-  const { height } = useWindowDimensions();
+
 
   const onLogin = async() => {
     if(form.email.length === 0 || form.password.length === 0)return;
 
+    setIsPosting(true);
     const wasSuccesful = await login(form.email, form.password);
+    setIsPosting(false);
 
     if(wasSuccesful)return;
 
@@ -67,7 +72,6 @@ export const LoginScreen = ({navigation}:Props) => {
           />
         </Layout>
 
-        <Text>{JSON.stringify(form, null, 2)}</Text>
 
         {/* Space */}
         <Layout style={styles.spacer}/>
@@ -76,6 +80,7 @@ export const LoginScreen = ({navigation}:Props) => {
 
         <Layout>
           <Button
+          disabled={isPosting}
           accessoryRight={<CustomIcon name="arrow-forward-outline" white/>}
           onPress={onLogin}
           >
