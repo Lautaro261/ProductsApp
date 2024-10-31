@@ -45,3 +45,26 @@ export const authCheckStatus = async ()=>{
     return null;
   }
 };
+
+export const authRegister = async(fullName: string, email:string, password:string) => {
+  email = email.toLowerCase();
+
+  try {
+    console.log({
+      fullName,
+      email,
+      password,
+    });
+    const { data } = await apiAxiosCustom.post<AuthResponse>('/auth/register',{
+      fullName,
+      email,
+      password,
+    });
+
+    return returnUserToken(data);
+
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+};

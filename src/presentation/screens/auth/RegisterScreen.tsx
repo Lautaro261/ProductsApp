@@ -1,9 +1,11 @@
-import React from 'react';
-import { ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
+/* eslint-disable curly */
+import React, { useState } from 'react';
+import { Alert, ScrollView, StyleSheet, useWindowDimensions } from 'react-native';
 import { Button, Input, Layout, Text } from '@ui-kitten/components';
 import { CustomIcon } from '../../components/ui/CustomIcon';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParams } from '../../navigation/StackNavigator';
+import { useAuthStore } from '../../store/auth/UseAuthStore';
 
 
 interface Props extends StackScreenProps<RootStackParams, 'RegisterScreen'>{}
@@ -13,6 +15,29 @@ export const RegisterScreen = ({navigation}:Props) => {
 
   const { height } = useWindowDimensions();
 
+  const { register } = useAuthStore();
+
+  const [ isPosting, setIsPosting ] = useState(false);
+
+  const [ form, setForm ] = useState({
+    fullName:'',
+    email: '',
+    password:'',
+  });
+
+  const onRegister = async()=>{
+    if(form.fullName.length === 0 || form.email.length === 0 || form.password.length === 0) return;
+
+    setIsPosting( true);
+
+    const wasSuccesful = await register(form.fullName, form.email, form.password);
+
+    setIsPosting(false);
+
+    if(wasSuccesful)return;
+
+    Alert.alert('Error', 'Error al registrarse');
+  };
 
 
   return (
@@ -29,6 +54,8 @@ export const RegisterScreen = ({navigation}:Props) => {
         <Input
           style={styles.emailInput}
           placeholder="Nombre completo"
+          value={form.fullName}
+          onChangeText={(value)=>setForm({...form, fullName:value})}
           accessoryLeft={<CustomIcon name="person-outline"/>}
           />
 
@@ -37,6 +64,8 @@ export const RegisterScreen = ({navigation}:Props) => {
           keyboardType="email-address"
           autoCapitalize="none"
           placeholder="Correo electrónico"
+          value={form.email}
+          onChangeText={(value)=>setForm({...form, email: value})}
           accessoryLeft={<CustomIcon name="email-outline"/>}
           />
 
@@ -45,6 +74,8 @@ export const RegisterScreen = ({navigation}:Props) => {
           autoCapitalize="none"
           placeholder="Contraseña"
           secureTextEntry
+          value={form.password}
+          onChangeText={(value)=>setForm({...form, password:value})}
           accessoryLeft={<CustomIcon name="lock-outline"/>}
           />
         </Layout>
@@ -52,12 +83,15 @@ export const RegisterScreen = ({navigation}:Props) => {
         {/* Space */}
         <Layout style={styles.spacer}/>
 
+        <Text>{JSON.stringify(form, null, 2)}</Text>
+
         {/* Button */}
 
         <Layout>
           <Button
+          disabled={isPosting}
           accessoryRight={<CustomIcon name="arrow-forward-outline" white/>}
-          onPress={()=>{}}
+          onPress={onRegister}
           >
             Crear
           </Button>
