@@ -71,7 +71,6 @@ export const useAuthStore = create<AuthState>()((set, get)=>({
     },
 
     register: async(fullName: string, email: string, password: string)=>{
-        console.log('UseAuthStore:', {fullName,email,password});
         const response = await authRegister(fullName, email, password);
 
         if(!response){

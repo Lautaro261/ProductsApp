@@ -50,11 +50,6 @@ export const authRegister = async(fullName: string, email:string, password:strin
   email = email.toLowerCase();
 
   try {
-    console.log({
-      fullName,
-      email,
-      password,
-    });
     const { data } = await apiAxiosCustom.post<AuthResponse>('/auth/register',{
       fullName,
       email,
