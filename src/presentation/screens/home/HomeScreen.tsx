@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text } from '@ui-kitten/components';
 import { useQuery } from '@tanstack/react-query';
 import { getProductsByPage } from '../../../actions/products/get-products-by-page';
 import { MainLayout } from '../../layouts/MainLayout';
+import { FullScreenLoader } from '../../components/ui/FullScreenLoader';
+import { ProductList } from '../../components/products/ProductList';
 
 export const HomeScreen = () => {
 
@@ -21,7 +22,9 @@ export const HomeScreen = () => {
     rightAction={()=>{}}
     rightActionIcon="plus-outline"
     >
-      <Text>HomeScreen</Text>
+      {
+        isLoading ? (<FullScreenLoader/>) : <ProductList products={products}/>
+      }
     </MainLayout>
   );
 };
