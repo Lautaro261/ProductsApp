@@ -3,15 +3,21 @@ import { Image, StyleSheet } from 'react-native';
 import { Product } from '../../../domain/entities/product';
 import { Card, Text } from '@ui-kitten/components';
 import { FadeInImage } from '../ui/FadeInImage';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParams } from '../../navigation/StackNavigator';
 
 interface Props {
     product: Product;
 }
 
 export const ProductCard = ({product}:Props) => {
+  const navigation = useNavigation<NavigationProp<RootStackParams>>();
+
+
   return (
     <Card
     style={styles.cardContainer}
+    onPress={()=>navigation.navigate('ProductScreen', {productId: product.id})}
     >
         {
             (product.images.length === 0)

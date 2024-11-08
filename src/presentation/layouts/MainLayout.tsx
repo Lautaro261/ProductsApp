@@ -12,7 +12,7 @@ interface Props {
     subTitle?: string;
     rightActionIcon?:string;
     rightAction?: ()=> void;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 

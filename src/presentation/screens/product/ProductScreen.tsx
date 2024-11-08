@@ -1,11 +1,35 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useRef } from 'react';
+import {StyleSheet} from 'react-native';
+import {MainLayout} from '../../layouts/MainLayout';
+import {Text} from '@ui-kitten/components';
+import {useQuery} from '@tanstack/react-query';
+import { StackScreenProps } from '@react-navigation/stack';
+import { RootStackParams } from '../../navigation/StackNavigator';
+import { getProductById } from '../../../actions/products/get-product-by-id';
 
-export const ProductScreen = () => {
+interface Props extends StackScreenProps<RootStackParams, 'ProductScreen'>{}
+
+export const ProductScreen = ({route}:Props) => {
+
+  const productIdRef = useRef(route.params.productId);
+
+  const { data:product} = useQuery({
+    queryKey: ['product', productIdRef.current],
+    queryFn: ()=>getProductById(productIdRef.current),
+
+  });
+
+  if (!product) {
+    return <MainLayout title="Cargando..." />;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>ProductScreen</Text>
-    </View>
+    <MainLayout
+    title={product.title}
+    subTitle={`Precio: ${product.price}`}
+    >
+      <Text>{product.title}</Text>
+    </MainLayout>
   );
 };
 
