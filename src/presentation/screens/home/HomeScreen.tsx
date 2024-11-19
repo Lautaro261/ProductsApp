@@ -1,9 +1,13 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { useInfiniteQuery} from '@tanstack/react-query';
 import { getProductsByPage } from '../../../actions/products/get-products-by-page';
 import { MainLayout } from '../../layouts/MainLayout';
 import { FullScreenLoader } from '../../components/ui/FullScreenLoader';
 import { ProductList } from '../../components/products/ProductList';
+import { FAB } from '../../components/ui/FAB';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { RootStackParams } from '../../navigation/StackNavigator';
 
 export const HomeScreen = () => {
 
@@ -13,6 +17,8 @@ export const HomeScreen = () => {
     staleTime: 1000 * 60 * 60, // 1 hora
     queryFn: ()=>getProductsByPage(0),
   }); */
+
+  const navigation = useNavigation<NavigationProp<RootStackParams>>();
 
   const { isLoading, data, fetchNextPage } = useInfiniteQuery({
     queryKey: ['products', 'infinite'],
@@ -27,6 +33,7 @@ export const HomeScreen = () => {
 
 
   return (
+    <>
     <MainLayout
     title="TesloShop - Products"
     subTitle="Aplicación Administrativa"
@@ -43,6 +50,17 @@ export const HomeScreen = () => {
       )
       }
     </MainLayout>
+
+    <FAB
+    iconName="plus-outline"
+    onPress={()=>navigation.navigate('ProductScreen', {productId: 'new'})}
+    style={{
+      position:'absolute',
+      bottom: 30,
+      right: 20,
+    }}
+    />
+    </>
   );
 };
 

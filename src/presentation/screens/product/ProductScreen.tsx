@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useRef} from 'react';
-import {FlatList, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {MainLayout} from '../../layouts/MainLayout';
 import {
   Button,
@@ -13,13 +13,12 @@ import {
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParams} from '../../navigation/StackNavigator';
-import {getProductById} from '../../../actions/products/get-product-by-id';
 import {ScrollView} from 'react-native-gesture-handler';
-import {FadeInImage} from '../../components/ui/FadeInImage';
-import {Gender, Product, Size} from '../../../domain/entities/product';
-import {CustomIcon} from '../../components/ui/CustomIcon';
 import {Formik} from 'formik';
-import { updateCreateProduct } from '../../../actions/products/update-create-product';
+import {Gender, Product, Size} from '../../../domain/entities/product';
+import {getProductById, updateCreateProduct} from '../../../actions/products';
+import {CustomIcon} from '../../components/ui/CustomIcon';
+import { ProductSlide } from '../../components/products/ProductSlide';
 
 const sizes: Size[] = [Size.Xs, Size.S, Size.M, Size.L, Size.Xl, Size.Xxl];
 const genders: Gender[] = [Gender.Kid, Gender.Men, Gender.Women, Gender.Unisex];
@@ -67,16 +66,8 @@ export const ProductScreen = ({route}: Props) => {
           <ScrollView style={styles.scrollContainer}>
 
             {/* Imágenes del producto */}
-            <Layout>
-              <FlatList
-                data={values.images}
-                keyExtractor={item => item}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                renderItem={({item}) => (
-                  <FadeInImage uri={item} style={styles.imageProduct} />
-                )}
-              />
+            <Layout style={styles.layoutImageProduct}>
+              <ProductSlide images={values.images}/>
             </Layout>
 
             {/* Formulario */}
@@ -199,10 +190,10 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
   },
-  imageProduct: {
-    width: 300,
-    height: 300,
-    marginHorizontal: 7,
+  layoutImageProduct: {
+    marginVertical: 10,
+    justifyContent:'center',
+    alignItems:'center',
   },
   layoutForm: {
     marginHorizontal: 10,
