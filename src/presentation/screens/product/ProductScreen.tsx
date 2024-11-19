@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useRef} from 'react';
 import {FlatList, StyleSheet} from 'react-native';
 import {MainLayout} from '../../layouts/MainLayout';
@@ -9,15 +10,16 @@ import {
   Text,
   useTheme,
 } from '@ui-kitten/components';
-import {useQuery} from '@tanstack/react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import {StackScreenProps} from '@react-navigation/stack';
 import {RootStackParams} from '../../navigation/StackNavigator';
 import {getProductById} from '../../../actions/products/get-product-by-id';
 import {ScrollView} from 'react-native-gesture-handler';
 import {FadeInImage} from '../../components/ui/FadeInImage';
-import {Gender, Size} from '../../../domain/entities/product';
+import {Gender, Product, Size} from '../../../domain/entities/product';
 import {CustomIcon} from '../../components/ui/CustomIcon';
 import {Formik} from 'formik';
+import { updateCreateProduct } from '../../../actions/products/update-create-product';
 
 const sizes: Size[] = [Size.Xs, Size.S, Size.M, Size.L, Size.Xl, Size.Xxl];
 const genders: Gender[] = [Gender.Kid, Gender.Men, Gender.Women, Gender.Unisex];
@@ -27,11 +29,23 @@ interface Props extends StackScreenProps<RootStackParams, 'ProductScreen'> {}
 export const ProductScreen = ({route}: Props) => {
   const productIdRef = useRef(route.params.productId);
   const theme = useTheme();
+  const queryClient = useQueryClient();
 
   const {data: product} = useQuery({
     queryKey: ['product', productIdRef.current],
     queryFn: () => getProductById(productIdRef.current),
   });
+
+  const mutation = useMutation({
+    mutationFn: (data: Product)=> updateCreateProduct({...data, id: productIdRef.current}),
+    onSuccess(data: Product) {
+      productIdRef.current = data.id; //creacion
+      queryClient.invalidateQueries({queryKey: ['products', 'infinite']});
+      queryClient.invalidateQueries({queryKey: ['product', data.id]});
+      console.log('success');
+    },
+  });
+
 
   if (!product) {
     return <MainLayout title="Cargando..." />;
@@ -40,7 +54,7 @@ export const ProductScreen = ({route}: Props) => {
   return (
     <Formik
     initialValues={product}
-    onSubmit={value => console.log(value)}
+    onSubmit={value => mutation.mutate(value)}
     >
 
 
@@ -99,6 +113,7 @@ export const ProductScreen = ({route}: Props) => {
                 label="Precio"
                 value={values.price.toString()}
                 onChangeText={handleChange('price')}
+                keyboardType="numeric"
               />
 
               <Input
@@ -106,6 +121,7 @@ export const ProductScreen = ({route}: Props) => {
                 label="Inventario"
                 value={values.stock.toString()}
                 onChangeText={handleChange('stock')}
+                keyboardType="numeric"
               />
             </Layout>
 
@@ -161,7 +177,8 @@ export const ProductScreen = ({route}: Props) => {
             {/* Botòn de guardar */}
 
             <Button
-              onPress={() => {}}
+              onPress={ ()=> handleSubmit()}
+              disabled={mutation.isPending}
               style={styles.buttonSave}
               accessoryLeft={<CustomIcon name="save-outline" white />}>
               Guardar
