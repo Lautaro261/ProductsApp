@@ -19,6 +19,7 @@ import {Gender, Product, Size} from '../../../domain/entities/product';
 import {getProductById, updateCreateProduct} from '../../../actions/products';
 import {CustomIcon} from '../../components/ui/CustomIcon';
 import { ProductSlide } from '../../components/products/ProductSlide';
+import { CameraAdpater } from '../../../config/adapters/camera-adapter';
 
 const sizes: Size[] = [Size.Xs, Size.S, Size.M, Size.L, Size.Xl, Size.Xxl];
 const genders: Gender[] = [Gender.Kid, Gender.Men, Gender.Women, Gender.Unisex];
@@ -62,6 +63,11 @@ export const ProductScreen = ({route}: Props) => {
         <MainLayout
         title={values.title}
         subTitle={`Precio: ${values.price}`}
+        rightAction={async()=>{
+          const photos = await CameraAdpater.takePicture();
+          console.log({photos});
+        }}
+        rightActionIcon="camera-outline"
         >
           <ScrollView style={styles.scrollContainer}>
 
