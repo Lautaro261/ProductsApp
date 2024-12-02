@@ -7,7 +7,6 @@ import {
   ButtonGroup,
   Input,
   Layout,
-  Text,
   useTheme,
 } from '@ui-kitten/components';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
@@ -64,10 +63,10 @@ export const ProductScreen = ({route}: Props) => {
         title={values.title}
         subTitle={`Precio: ${values.price}`}
         rightAction={async()=>{
-          const photos = await CameraAdpater.takePicture();
-          console.log({photos});
+          const photos = await CameraAdpater.getPicturesFromLibrary();
+          setFieldValue('images', [...values.images, ...photos]);
         }}
-        rightActionIcon="camera-outline"
+        rightActionIcon="image-outline"
         >
           <ScrollView style={styles.scrollContainer}>
 
@@ -181,7 +180,6 @@ export const ProductScreen = ({route}: Props) => {
               Guardar
             </Button>
 
-            <Text>{JSON.stringify(values, null, 2)}</Text>
 
             {/* Separador */}
             <Layout style={styles.layoutSeparator} />

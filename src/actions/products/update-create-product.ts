@@ -17,7 +17,7 @@ const updateProduct = async (product: Partial<Product>) => {
   const {id, images = [], ...rest} = product;
 
   try {
-    const checkedImages = prepareImages(images);
+    const checkedImages = await prepareImages(images);
 
     const {data} = await apiAxiosCustom.patch(`/products/${id}`, {
       images: checkedImages,
@@ -35,16 +35,42 @@ const updateProduct = async (product: Partial<Product>) => {
   }
 };
 
-const prepareImages = (images: string[]) => {
+const prepareImages = async(images: string[]) => {
   //Todo: revisar los files
 
-  return images.map(image => image.split('/').pop());
+  const fileImages = images.filter(image => image.includes('file://'));
+  const currentImages = images.filter(image => !image.includes('file://'));
+
+  if(fileImages.length > 0){
+    const uploadPromises = fileImages.map(image => uploadImage(image));
+    const uploadedImages = await Promise.all(uploadPromises);
+    currentImages.push(...uploadedImages);
+  }
+
+  return currentImages.map(image => image.split('/').pop());
+};
+
+const uploadImage = async(image : string)=>{
+  const formData = new FormData();
+  formData.append('file', {
+    uri: image,
+    type: 'image/jpeg',
+    name: image.split('/').pop(),
+  });
+
+  const { data } = await apiAxiosCustom.post<{image: string}>('files/product', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
+  return data.image;
 };
 
 const createProduct = async (product: Partial<Product>) => {
   const {id ,images = [], ...rest} = product;
   try {
-    const checkedImages = prepareImages(images);
+    const checkedImages = await prepareImages(images);
 
     const {data} = await apiAxiosCustom.post('/products', {
       images: checkedImages,
